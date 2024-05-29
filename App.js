@@ -1,20 +1,32 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-
+import React from "react";
+import { Text, View } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Login from "./screens/Login";
+import Signup from "./screens/Signup";
+import Splash from "./screens/Splash";
+import Dashboard from "./screens/Dashboard";
+import Notifications from "./screens/Notifications";
+import BloodSugarLog from "./screens/BloodSugarLog";
+import LogHistory from "./screens/LogHistory";
+import Articles from "./screens/Articles";
+import ArticleDetail from "./screens/ArticleDetail";
 export default function App() {
+  const Stack = createNativeStackNavigator();
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Splash" component={Splash} />
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Signup" component={Signup} />
+        <Stack.Screen name="Dashboard" component={Dashboard} />
+        <Stack.Screen name="Notifications" component={Notifications} />
+        <Stack.Screen name="BloodSugarLog" component={BloodSugarLog} />
+        <Stack.Screen name="LogHistory" component={LogHistory} />
+        <Stack.Screen name="Articles" component={Articles} />
+        <Stack.Screen name="ArticleDetail" component={ArticleDetail} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
