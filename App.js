@@ -11,6 +11,7 @@ import BloodSugarLog from "./screens/BloodSugarLog";
 import LogHistory from "./screens/LogHistory";
 import Articles from "./screens/Articles";
 import ArticleDetail from "./screens/ArticleDetail";
+
 export default function App() {
   const Stack = createNativeStackNavigator();
 
@@ -26,6 +27,7 @@ export default function App() {
         <Stack.Screen name="LogHistory" component={LogHistory} />
         <Stack.Screen name="Articles" component={Articles} />
         <Stack.Screen name="ArticleDetail" component={ArticleDetail} />
+       
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -14,7 +14,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 
 const BloodSugarLog = () => {
   const [bloodSugar, setBloodSugar] = useState("");
-  const [mealType, setMealType] = useState("Breakfast");
+  const [mealType, setMealType] = useState("");
   const [notes, setNotes] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [submittedData, setSubmittedData] = useState({});
