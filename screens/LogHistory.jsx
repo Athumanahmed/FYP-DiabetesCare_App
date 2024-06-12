@@ -44,8 +44,8 @@ const LogHistoryScreen = () => {
       <Text style={styles.logText}>Date: {item.date}</Text>
       <Text style={styles.logText}>Time: {item.time}</Text>
       <Text style={styles.logText}>Blood Sugar: {item.bloodSugar} mg/dL</Text>
-      <Text style={styles.logText}>Meal: {item.meal}</Text>
-      <Text style={styles.logText}>Note: {item.note}</Text>
+      <Text style={styles.logText}>Meal: {item.mealType}</Text>
+      <Text style={styles.logText}>Note: {item.notes}</Text>
     </View>
   );
 
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: "#F5F5F5",
-    marginTop:30
+    marginTop: 30,
   },
   header: {
     flexDirection: "row",

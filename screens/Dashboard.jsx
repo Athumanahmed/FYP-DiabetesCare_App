@@ -1,21 +1,42 @@
-import React from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
-
+import { account } from "../config/Appwrite";
 const Dashboard2 = ({ navigation }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const response = await account.get();
+        setUser(response);
+      } catch (error) {
+        console.error("Failed to fetch user details", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getUser();
+  }, []);
+
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <FontAwesome5 name="bars" size={24} color="black" />
         <Image
-          source={{ uri: "https://randomuser.me/api/portraits/men/32.jpg" }}
+          source={require("../assets/health.png")}
           style={styles.profileImage}
         />
       </View>
 
       {/* Welcome Message */}
-      <Text style={styles.welcome}>Hello David</Text>
+      <Text style={styles.welcome}> Hello {user ? user.name : "User"}</Text>
       <Text style={styles.subtitle}>Welcome Back!</Text>
 
       <View style={styles.section}>
@@ -44,7 +65,7 @@ const Dashboard2 = ({ navigation }) => {
           style={[styles.optionBox, styles.pinkBox]}
           onPress={() => navigation.navigate("Articles")}
         >
-          <Text style={styles.optionText}>Health Atricles</Text>
+          <Text style={styles.optionText}>Health Articles</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.optionBox, styles.beigeBox]}

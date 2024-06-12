@@ -6,19 +6,24 @@ import {
   TouchableOpacity,
   StyleSheet,
   Modal,
+  RefreshControl,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { databases } from "../config/Appwrite";
 
 const BloodSugarLog = () => {
   const [bloodSugar, setBloodSugar] = useState("");
-  const [mealType, setMealType] = useState("");
+  const [mealType, setMealType] = useState("Breakfast");
+  const [isFasting, setIsFasting] = useState("No");
   const [notes, setNotes] = useState("");
+  const [healthStatus, setHealthStatus] = useState("Normal");
+  const [customHealthStatus, setCustomHealthStatus] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [submittedData, setSubmittedData] = useState({});
-
+  const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
 
   const handleSubmit = async () => {
@@ -32,10 +37,32 @@ const BloodSugarLog = () => {
       mealType,
       time: currentTime,
       notes,
+      healthStatus:
+        healthStatus === "Other" ? customHealthStatus : healthStatus,
     };
 
     setSubmittedData(logEntry);
     setModalVisible(true);
+
+    // Clear input fields
+    setBloodSugar("");
+    setMealType("Breakfast");
+    setIsFasting("No");
+    setNotes("");
+    setHealthStatus("Normal");
+    setCustomHealthStatus("");
+
+    const handleRefresh = () => {
+      setRefreshing(true);
+      // Clear input fields
+      setBloodSugar("");
+      setMealType("Breakfast");
+      setIsFasting("No");
+      setNotes("");
+      setHealthStatus("Normal");
+      setCustomHealthStatus("");
+      setRefreshing(false);
+    };
 
     try {
       // Retrieve existing log entries
@@ -47,8 +74,25 @@ const BloodSugarLog = () => {
 
       // Save the updated log entries back to AsyncStorage
       await AsyncStorage.setItem("logEntries", JSON.stringify(logEntries));
+
+      const response = await databases.createDocument(
+        "66682e8d0021614bfa8d",
+        "666973ef00235f00e2b7",
+        "unique()",
+        {
+          bloodSugar,
+          mealType,
+          isFasting,
+          notes,
+          healthStatus,
+          customHealthStatus,
+        }
+      );
+
+      console.log("Document created successfully:", response);
     } catch (error) {
       console.error("Failed to save log entry", error);
+      console.error("Error creating document:", error);
     }
 
     setTimeout(() => {
@@ -65,14 +109,16 @@ const BloodSugarLog = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Log Blood Sugar</Text>
 
+      <Text style={styles.label}>Blood Sugar Value (mg/dL)</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter blood sugar value (mg/dL)"
+        placeholder="Enter blood sugar value"
         keyboardType="numeric"
         value={bloodSugar}
         onChangeText={setBloodSugar}
       />
 
+      <Text style={styles.label}>Meal Type</Text>
       <Picker
         selectedValue={mealType}
         style={styles.picker}
@@ -81,11 +127,52 @@ const BloodSugarLog = () => {
         <Picker.Item label="Breakfast" value="Breakfast" />
         <Picker.Item label="Lunch" value="Lunch" />
         <Picker.Item label="Dinner" value="Dinner" />
+        <Picker.Item label="Fasting" value="Fasting" />
       </Picker>
 
+      {mealType === "Fasting" && (
+        <>
+          <Text style={styles.label}>Are you fasting Today?</Text>
+          <Picker
+            selectedValue={isFasting}
+            style={styles.picker}
+            onValueChange={(itemValue) => setIsFasting(itemValue)}
+          >
+            <Picker.Item label="No" value="No" />
+            <Picker.Item label="Yes" value="Yes" />
+          </Picker>
+        </>
+      )}
+
+      <Text style={styles.label}>Current Health Status</Text>
+      <Picker
+        selectedValue={healthStatus}
+        style={styles.picker}
+        onValueChange={(itemValue) => setHealthStatus(itemValue)}
+      >
+        <Picker.Item label="Normal" value="Normal" />
+        <Picker.Item label="Feeling Dizzy" value="Feeling Dizzy" />
+        <Picker.Item label="Feeling Weak" value="Feeling Weak" />
+        <Picker.Item label="Feeling Tired" value="Feeling Tired" />
+        <Picker.Item label="Other" value="Other" />
+      </Picker>
+
+      {healthStatus === "Other" && (
+        <>
+          <Text style={styles.label}>Custom Health Status</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your health status"
+            value={customHealthStatus}
+            onChangeText={setCustomHealthStatus}
+          />
+        </>
+      )}
+
+      <Text style={styles.label}>Other Health Conditions</Text>
       <TextInput
         style={styles.input}
-        placeholder="Additional notes"
+        placeholder="Other Health Conditions.."
         value={notes}
         onChangeText={setNotes}
         multiline
@@ -127,6 +214,9 @@ const BloodSugarLog = () => {
             </Text>
             <Text style={styles.modalText}>Time: {submittedData.time}</Text>
             <Text style={styles.modalText}>Notes: {submittedData.notes}</Text>
+            <Text style={styles.modalText}>
+              Health Status: {submittedData.healthStatus}
+            </Text>
             <TouchableOpacity
               style={styles.closeButton}
               onPress={handleCloseModal}
@@ -203,6 +293,7 @@ const styles = StyleSheet.create({
   modalText: {
     fontSize: 16,
     marginBottom: 10,
+    borderRadius: 10,
   },
   closeButton: {
     backgroundColor: "#007BFF",
@@ -215,7 +306,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-
   navBar: {
     flexDirection: "row",
     justifyContent: "space-around",
@@ -231,6 +321,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 5,
+  },
+
+  label: {
+    fontSize: 16,
+    marginBottom: 5,
   },
 });
 

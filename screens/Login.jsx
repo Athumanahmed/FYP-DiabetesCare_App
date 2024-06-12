@@ -1,23 +1,66 @@
-import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
-import React from "react";
-import Animated, {
-  FadeIn,
-  FadeInDown,
-  FadeInUp,
-  FadeOut,
-} from "react-native-reanimated";
+import {
+  Image,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
+import React, { useEffect, useState } from "react";
+
 import { useNavigation } from "@react-navigation/native";
+import { account } from "../config/Appwrite";
 
 const Login = () => {
   const navigation = useNavigation();
-
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const handleSignup = () => {
     navigation.navigate("Signup");
   };
 
-  const goTo = () => {
-    navigation.navigate("Dashboard");
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        await account.get();
+        // If there's an active session, log out
+        await account.deleteSession("current");
+      } catch (error) {
+        // No active session found, no action needed
+        console.log("No active session found.");
+      }
+    };
+
+    checkSession();
+  }, []);
+
+  const handleLogin = async () => {
+    // Simple email validation regex
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    try {
+      const response = await account.createEmailPasswordSession(
+        email,
+        password
+      );
+      console.log(response);
+      navigation.navigate("Dashboard");
+    } catch (error) {
+      Alert.alert("Login Failed", error.message);
+      console.error(error);
+    }
+    setLoading(false);
   };
+
   return (
     <View className="bg-white w-full h-full flex items-center justify-center ">
       <View className="w-full justify-around flex pt-30 pb-5">
@@ -28,66 +71,60 @@ const Login = () => {
           />
         </View>
         <View className="flex items-center justify-center ">
-          <Animated.Text
-            entering={FadeInUp.delay(400).duration(2000).springify().damping(4)}
-            className="text-6xl font-bold text-center tracking-wider text-blue-800"
-          >
+          <Text className="text-6xl font-bold text-center tracking-wider text-blue-800">
             DiabetesCare.
-          </Animated.Text>
+          </Text>
         </View>
-        {/* heaer */}
         <View className="flex items-center mb-5">
           <Text className="font-semibold text-xl text-slate-400">
             Login to start your health session now
           </Text>
         </View>
-        {/* form */}
         <View className="flex items-center justify-center mx-4 space-y-4">
-          <Animated.View
-            entering={FadeInDown.duration(1000).springify()}
-            className="bg-black/5 p-4 rounded-xl w-full mb-2"
-          >
+          <View className="bg-black/5 p-4 rounded-xl w-full mb-2">
             <TextInput
               className="text-lg"
               placeholder="Enter your email"
               placeholderTextColor={"gray"}
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
             />
-          </Animated.View>
-          <Animated.View
-            entering={FadeInDown.duration(1000).delay(200).springify()}
-            className="bg-black/5 p-4 rounded-xl w-full mb-3"
-          >
+          </View>
+          <View className="bg-black/5 p-4 rounded-xl w-full mb-3">
             <TextInput
               className="text-lg"
               placeholder="Enter your Password"
               placeholderTextColor={"gray"}
               secureTextEntry
+              value={password}
+              onChangeText={setPassword}
             />
-          </Animated.View>
+          </View>
 
-          <Animated.View
-            entering={FadeInDown.duration(1000).delay(400).springify()}
-            className="w-full"
-          >
+          <View className="w-full">
             <TouchableOpacity
-              className=" p-3 rounded-lg mb-3 bg-blue-800"
-              onPress={goTo}
+              className="p-3 rounded-lg mb-3 bg-blue-800"
+              onPress={handleLogin}
+              disabled={loading}
             >
-              <Text className="text-white text-center text-xl font-semibold">
-                Login
-              </Text>
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text className="text-white text-center text-xl font-semibold">
+                  Login
+                </Text>
+              )}
             </TouchableOpacity>
-          </Animated.View>
+          </View>
 
-          <Animated.View
-            entering={FadeInDown.duration(1000).delay(600).springify()}
-            className="flex-row justify-center"
-          >
+          <View className="flex-row justify-center">
             <Text className="text-lg mr-4">Don't have an Account?</Text>
             <TouchableOpacity onPress={handleSignup}>
               <Text className="text-blue-900 text-lg font-bold">Sign Up</Text>
             </TouchableOpacity>
-          </Animated.View>
+          </View>
         </View>
       </View>
     </View>
