@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   Modal,
-  RefreshControl,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
@@ -21,12 +20,48 @@ const BloodSugarLog = () => {
   const [notes, setNotes] = useState("");
   const [healthStatus, setHealthStatus] = useState("Normal");
   const [customHealthStatus, setCustomHealthStatus] = useState("");
+  const [alertVisible, setAlertVisible] = useState(false); // State for alert modal visibility
   const [modalVisible, setModalVisible] = useState(false);
   const [submittedData, setSubmittedData] = useState({});
-  const [refreshing, setRefreshing] = useState(false);
+  const [alertMessage, setAlertMessage] = useState(""); // State for alert message
+  const [alertColor, setAlertColor] = useState("green"); // State for alert color
   const navigation = useNavigation();
 
+  // Helper function to determine the alert message
+  const bloodSugarAlertMessage = (bloodSugar) => {
+    const bloodSugarValue = parseFloat(bloodSugar);
+
+    if (bloodSugarValue < 4.00) {
+      return "Low blood sugar - Take glucose to stabilize.";
+    } else if (bloodSugarValue > 10.00) {
+      return "High blood sugar";
+    } else {
+      return "Normal blood sugar level";
+    }
+  };
+
+  // Helper function to determine the alert color
+  const bloodSugarAlertColor = (bloodSugar) => {
+    const bloodSugarValue = parseFloat(bloodSugar);
+
+    if (bloodSugarValue < 4.00 || bloodSugarValue > 10.00) {
+      return "red";
+    } else {
+      return "green";
+    }
+  };
+
   const handleSubmit = async () => {
+    if (bloodSugar) {
+      setAlertMessage(bloodSugarAlertMessage(bloodSugar));
+      setAlertColor(bloodSugarAlertColor(bloodSugar));
+      setAlertVisible(true); // Show the alert modal first
+    }
+  };
+
+  const handleConfirmAlert = async () => {
+    setAlertVisible(false);
+
     const currentTime = new Date().toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
@@ -37,8 +72,7 @@ const BloodSugarLog = () => {
       mealType,
       time: currentTime,
       notes,
-      healthStatus:
-        healthStatus === "Other" ? customHealthStatus : healthStatus,
+      healthStatus: healthStatus === "Other" ? customHealthStatus : healthStatus,
     };
 
     setSubmittedData(logEntry);
@@ -51,18 +85,6 @@ const BloodSugarLog = () => {
     setNotes("");
     setHealthStatus("Normal");
     setCustomHealthStatus("");
-
-    const handleRefresh = () => {
-      setRefreshing(true);
-      // Clear input fields
-      setBloodSugar("");
-      setMealType("Breakfast");
-      setIsFasting("No");
-      setNotes("");
-      setHealthStatus("Normal");
-      setCustomHealthStatus("");
-      setRefreshing(false);
-    };
 
     try {
       // Retrieve existing log entries
@@ -105,17 +127,21 @@ const BloodSugarLog = () => {
     setModalVisible(false);
   };
 
+  // Function to handle blood sugar input change
+  const handleBloodSugarChange = (text) => {
+    setBloodSugar(text);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Log Blood Sugar</Text>
-
-      <Text style={styles.label}>Blood Sugar Value (mg/dL)</Text>
+      <Text style={styles.label}>Blood Sugar Value (mmol/l)</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter blood sugar value"
         keyboardType="numeric"
         value={bloodSugar}
-        onChangeText={setBloodSugar}
+        onChangeText={handleBloodSugarChange} // Updated handler
       />
 
       <Text style={styles.label}>Meal Type</Text>
@@ -124,10 +150,12 @@ const BloodSugarLog = () => {
         style={styles.picker}
         onValueChange={(itemValue) => setMealType(itemValue)}
       >
-        <Picker.Item label="Breakfast" value="Breakfast" />
-        <Picker.Item label="Lunch" value="Lunch" />
-        <Picker.Item label="Dinner" value="Dinner" />
         <Picker.Item label="Fasting" value="Fasting" />
+        <Picker.Item label="2hrs after Breakfast" value="2hrs after Breakfast" />
+        <Picker.Item label="Before Lunch" value="Before Lunch" />
+        <Picker.Item label="2hrs after Lunch" value="2hrs after Lunch" />
+        <Picker.Item label="Before Dinner" value="Before Dinner" />
+        <Picker.Item label="2hrs after Dinner" value="2hrs after Dinner" />
       </Picker>
 
       {mealType === "Fasting" && (
@@ -182,21 +210,29 @@ const BloodSugarLog = () => {
         <Text style={styles.buttonText}>Submit</Text>
       </TouchableOpacity>
 
-      {/* Navigation Bar */}
-      <View style={styles.navBar}>
-        <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
-          <FontAwesome5 name="home" size={24} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
-          <FontAwesome5 name="search" size={24} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
-          <FontAwesome5 name="bell" size={24} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-          <FontAwesome5 name="user" size={24} color="black" />
-        </TouchableOpacity>
-      </View>
+      {/* Alert Modal */}
+      <Modal
+        visible={alertVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setAlertVisible(false)}
+      >
+        <View style={styles.alertContainer}>
+          <View style={styles.alertContent}>
+            <Text style={[styles.alertText, { color: alertColor }]}>
+              {alertMessage}
+            </Text>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={handleConfirmAlert}
+            >
+              <Text style={styles.closeButtonText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Main Modal */}
       <Modal
         visible={modalVisible}
         animationType="slide"
@@ -226,6 +262,22 @@ const BloodSugarLog = () => {
           </View>
         </View>
       </Modal>
+
+      {/* Navigation Bar */}
+      <View style={styles.navBar}>
+        <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
+          <FontAwesome5 name="home" size={24} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
+          <FontAwesome5 name="search" size={24} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
+          <FontAwesome5 name="bell" size={24} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+          <FontAwesome5 name="user" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -233,78 +285,39 @@ const BloodSugarLog = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9F9F9",
-    paddingHorizontal: 20,
-    paddingTop: 40,
+    padding: 20,
+    backgroundColor: "#fff",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
   },
+  label: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
   input: {
-    backgroundColor: "#FFFFFF",
-    padding: 15,
-    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 10,
     marginBottom: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
+    borderRadius: 5,
   },
   picker: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 10,
+    height: 50,
+    width: "100%",
     marginBottom: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
   },
   button: {
     backgroundColor: "#007BFF",
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 5,
     alignItems: "center",
   },
   buttonText: {
-    color: "#FFFFFF",
+    color: "#fff",
     fontSize: 16,
-    fontWeight: "bold",
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    backgroundColor: "#FFFFFF",
-    padding: 20,
-    borderRadius: 10,
-    width: "80%",
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 15,
-  },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 10,
-    borderRadius: 10,
-  },
-  closeButton: {
-    backgroundColor: "#007BFF",
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 20,
-  },
-  closeButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "bold",
   },
   navBar: {
     flexDirection: "row",
@@ -322,10 +335,53 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
-
-  label: {
+  alertContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  alertContent: {
+    width: 300,
+    padding: 20,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  alertText: {
+    fontSize: 18,
+    marginBottom: 20,
+  },
+  closeButton: {
+    backgroundColor: "#007BFF",
+    padding: 10,
+    borderRadius: 5,
+  },
+  closeButtonText: {
+    color: "#fff",
     fontSize: 16,
-    marginBottom: 5,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: 300,
+    padding: 20,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 10,
   },
 });
 

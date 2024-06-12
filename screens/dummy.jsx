@@ -6,20 +6,30 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
+  Dimensions,
 } from "react-native";
-import { LineChart } from "react-native-chart-kit";
-import { Dimensions } from "react-native";
 import {
   FontAwesome5,
   MaterialIcons,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
+import { LineChart } from "react-native-chart-kit";
 
 import { account } from "../config/Appwrite";
 
 const Dashboard2 = ({ navigation }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const [chartData, setChartData] = useState({
+    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    datasets: [
+      {
+        data: [110, 120, 130, 140, 135, 125, 130],
+        strokeWidth: 2,
+      },
+    ],
+  });
 
   useEffect(() => {
     const getUser = async () => {
@@ -40,37 +50,6 @@ const Dashboard2 = ({ navigation }) => {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
-  const data = {
-    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-    datasets: [
-      {
-        data: [4, 6, 5, 7, 8, 5, 6],
-      },
-    ],
-  };
-
-  const chartConfig = {
-    backgroundGradientFrom: "#FFF",
-    backgroundGradientTo: "#FFF",
-    color: (opacity = 1) => `rgba(255, 69, 0, ${opacity})`,
-    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-    strokeWidth: 2,
-    propsForDots: {
-      r: "4",
-      strokeWidth: "2",
-      stroke: "#ffa726",
-    },
-    style: {
-      marginVertical: 8,
-      borderRadius: 16,
-    },
-    yAxisLabel: "",
-    yAxisSuffix: "mg/dL",
-    yAxisInterval: 1, // optional, defaults to 1
-  };
-
-  const screenWidth = Dimensions.get("window").width;
-
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -86,17 +65,35 @@ const Dashboard2 = ({ navigation }) => {
       <Text style={styles.welcome}>Hello {user ? user.name : "User"}</Text>
       <Text style={styles.subtitle}>Welcome Back!</Text>
 
+      {/* Blood Glucose Overview */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Blood Glucose Overview</Text>
         <LineChart
-          data={data}
-          width={screenWidth - 40} // from react-native
+          data={chartData}
+          width={Dimensions.get("window").width - 40}
           height={220}
-          chartConfig={chartConfig}
+          yAxisLabel=""
+          yAxisSuffix=" mg/dL"
+          chartConfig={{
+            backgroundColor: "#e26a00",
+            backgroundGradientFrom: "#fb8c00",
+            backgroundGradientTo: "#ffa726",
+            decimalPlaces: 1,
+            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            style: {
+              borderRadius: 16,
+            },
+            propsForDots: {
+              r: "6",
+              strokeWidth: "2",
+              stroke: "#ffa726",
+            },
+          }}
+          bezier
           style={{
             marginVertical: 8,
             borderRadius: 16,
-            marginLeft: -20,
           }}
         />
       </View>
@@ -158,13 +155,15 @@ const Dashboard2 = ({ navigation }) => {
         <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
           <FontAwesome5 name="home" size={24} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
+        <TouchableOpacity onPress={() => navigation.navigate("DietTips")}>
           <MaterialIcons name="restaurant" size={24} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
           <FontAwesome5 name="bell" size={24} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("RegisterPatient")}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("RegisterPatient")}
+        >
           <FontAwesome5 name="user" size={24} color="black" />
         </TouchableOpacity>
       </View>
@@ -195,9 +194,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 5,
   },
-  icon: {
-    marginBottom: 10,
-  },
   subtitle: {
     fontSize: 16,
     color: "#7B7B7B",
@@ -210,6 +206,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 8,
+  },
+  icon: {
+    marginBottom: 10,
   },
   optionsContainer: {
     flexDirection: "row",
