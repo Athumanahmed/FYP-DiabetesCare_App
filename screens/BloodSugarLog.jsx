@@ -10,7 +10,11 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { FontAwesome5 } from "@expo/vector-icons";
+import {
+  FontAwesome5,
+  MaterialIcons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import { databases } from "../config/Appwrite";
 
 const BloodSugarLog = () => {
@@ -31,9 +35,9 @@ const BloodSugarLog = () => {
   const bloodSugarAlertMessage = (bloodSugar) => {
     const bloodSugarValue = parseFloat(bloodSugar);
 
-    if (bloodSugarValue < 4.00) {
+    if (bloodSugarValue < 4.0) {
       return "Low blood sugar - Take glucose to stabilize.";
-    } else if (bloodSugarValue > 10.00) {
+    } else if (bloodSugarValue > 10.0) {
       return "High blood sugar";
     } else {
       return "Normal blood sugar level";
@@ -44,7 +48,7 @@ const BloodSugarLog = () => {
   const bloodSugarAlertColor = (bloodSugar) => {
     const bloodSugarValue = parseFloat(bloodSugar);
 
-    if (bloodSugarValue < 4.00 || bloodSugarValue > 10.00) {
+    if (bloodSugarValue < 4.0 || bloodSugarValue > 10.0) {
       return "red";
     } else {
       return "green";
@@ -72,7 +76,8 @@ const BloodSugarLog = () => {
       mealType,
       time: currentTime,
       notes,
-      healthStatus: healthStatus === "Other" ? customHealthStatus : healthStatus,
+      healthStatus:
+        healthStatus === "Other" ? customHealthStatus : healthStatus,
     };
 
     setSubmittedData(logEntry);
@@ -151,7 +156,10 @@ const BloodSugarLog = () => {
         onValueChange={(itemValue) => setMealType(itemValue)}
       >
         <Picker.Item label="Fasting" value="Fasting" />
-        <Picker.Item label="2hrs after Breakfast" value="2hrs after Breakfast" />
+        <Picker.Item
+          label="2hrs after Breakfast"
+          value="2hrs after Breakfast"
+        />
         <Picker.Item label="Before Lunch" value="Before Lunch" />
         <Picker.Item label="2hrs after Lunch" value="2hrs after Lunch" />
         <Picker.Item label="Before Dinner" value="Before Dinner" />
@@ -269,7 +277,7 @@ const BloodSugarLog = () => {
           <FontAwesome5 name="home" size={24} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
-          <FontAwesome5 name="search" size={24} color="black" />
+          <MaterialIcons name="restaurant" size={24} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
           <FontAwesome5 name="bell" size={24} color="black" />

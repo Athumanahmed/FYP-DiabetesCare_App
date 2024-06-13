@@ -164,7 +164,9 @@ const Dashboard2 = ({ navigation }) => {
         <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
           <FontAwesome5 name="bell" size={24} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("RegisterPatient")}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("RegisterPatient")}
+        >
           <FontAwesome5 name="user" size={24} color="black" />
         </TouchableOpacity>
       </View>

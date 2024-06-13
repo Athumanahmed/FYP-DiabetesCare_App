@@ -1,5 +1,4 @@
 import React from "react";
-import { Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./screens/Login";
@@ -11,6 +10,7 @@ import BloodSugarLog from "./screens/BloodSugarLog";
 import LogHistory from "./screens/LogHistory";
 import Articles from "./screens/Articles";
 import ArticleDetail from "./screens/ArticleDetail";
+import Medications from "./screens/Medications";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -27,7 +27,7 @@ export default function App() {
         <Stack.Screen name="LogHistory" component={LogHistory} />
         <Stack.Screen name="Articles" component={Articles} />
         <Stack.Screen name="ArticleDetail" component={ArticleDetail} />
-       
+        <Stack.Screen name="Medications" component={Medications} />
       </Stack.Navigator>
     </NavigationContainer>
   );
