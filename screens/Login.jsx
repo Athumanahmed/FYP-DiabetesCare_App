@@ -10,7 +10,7 @@ import {
 import React, { useEffect, useState } from "react";
 
 import { useNavigation } from "@react-navigation/native";
-import { account } from "../config/Appwrite";
+import { account } from "../config/Appwrite"; 
 
 const Login = () => {
   const navigation = useNavigation();
@@ -107,7 +107,7 @@ const Login = () => {
             <TouchableOpacity
               className="p-3 rounded-lg mb-3 bg-blue-800"
               onPress={handleLogin}
-              disabled={loading}
+              disabled={loading} 
             >
               {loading ? (
                 <ActivityIndicator color="#fff" />
