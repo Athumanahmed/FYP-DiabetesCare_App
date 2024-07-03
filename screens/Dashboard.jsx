@@ -16,10 +16,12 @@ import {
 } from "@expo/vector-icons";
 
 import { account } from "../config/Appwrite";
+import { databases } from "../config/Appwrite";
 
 const Dashboard2 = ({ navigation }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [bloodSugarData, setBloodSugarData] = useState([]);
 
   useEffect(() => {
     const getUser = async () => {
@@ -44,7 +46,7 @@ const Dashboard2 = ({ navigation }) => {
     labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
     datasets: [
       {
-        data: [4, 6, 5, 7, 8, 5, 6],
+        data: bloodSugarData.length ? bloodSugarData : [4, 6, 5, 7, 8, 5, 6],
       },
     ],
   };
@@ -73,15 +75,6 @@ const Dashboard2 = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <FontAwesome5 name="bars" size={24} color="black" />
-        <Image
-          source={require("../assets/health.png")}
-          style={styles.profileImage}
-        />
-      </View>
-
       {/* Welcome Message */}
       <Text style={styles.welcome}>Hello {user ? user.name : "User"}</Text>
       <Text style={styles.subtitle}>Welcome Back!</Text>
@@ -137,7 +130,7 @@ const Dashboard2 = ({ navigation }) => {
             color="black"
             style={styles.icon}
           />
-          <Text style={styles.optionText}>Health Articles</Text>
+          <Text style={styles.optionText}>Diabetes Articles</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.optionBox, styles.beigeBox]}
@@ -164,9 +157,7 @@ const Dashboard2 = ({ navigation }) => {
         <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
           <FontAwesome5 name="bell" size={24} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("RegisterPatient")}
-        >
+        <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
           <FontAwesome5 name="user" size={24} color="black" />
         </TouchableOpacity>
       </View>

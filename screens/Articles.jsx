@@ -39,14 +39,20 @@ const Articles = ({ navigation }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.greeting}>Hey, Kwang</Text>
-        <Image
-          style={styles.profileImage}
-          source={require("../assets/profile.png")}
-        />
+      <View className="flex flex-col py-2">
+        <Text className="text-center font-semibold text-blue-800 text-4xl">
+          Diabetes Education and Resources
+        </Text>
+        <Text className="text-lg p-2">
+          Welcome to the DiabetesCare Articles section! Here, you'll find a
+          curated collection of insightful articles designed to help you better
+          understand and manage your diabetes. Explore topics ranging from
+          healthy eating and managing stress to understanding diabetes and
+          maintaining heart health. Our aim is to provide you with the knowledge
+          and tools you need to lead a healthier, more balanced life. Dive in
+          and empower yourself with valuable information tailored to your needs.
+        </Text>
       </View>
-
       <View style={styles.recommendations}>
         {recommendations.map((item, index) => (
           <TouchableOpacity
@@ -87,6 +93,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F5F5",
     paddingHorizontal: 20,
     paddingBottom: 20,
+    marginTop: 50,
   },
   header: {
     flexDirection: "row",

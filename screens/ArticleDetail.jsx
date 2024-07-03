@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: "#F5F5F5",
     padding: 20,
+    marginTop: 30,
   },
   image: {
     width: "100%",

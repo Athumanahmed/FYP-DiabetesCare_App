@@ -11,6 +11,7 @@ import LogHistory from "./screens/LogHistory";
 import Articles from "./screens/Articles";
 import ArticleDetail from "./screens/ArticleDetail";
 import Medications from "./screens/Medications";
+import Profile from "./screens/Profile";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -28,6 +29,7 @@ export default function App() {
         <Stack.Screen name="Articles" component={Articles} />
         <Stack.Screen name="ArticleDetail" component={ArticleDetail} />
         <Stack.Screen name="Medications" component={Medications} />
+        <Stack.Screen name="Profile" component={Profile} />
       </Stack.Navigator>
     </NavigationContainer>
   );

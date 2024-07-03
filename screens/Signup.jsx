@@ -39,7 +39,7 @@ const Signup = () => {
   }, []);
 
   const handleSignup = async () => {
-    // Simple email validation regex
+    //  email validation 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
       setError("Please enter a valid email address.");

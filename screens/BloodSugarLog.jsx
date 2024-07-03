@@ -16,6 +16,7 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import { databases } from "../config/Appwrite";
+import { ID } from "appwrite";
 
 const BloodSugarLog = () => {
   const [bloodSugar, setBloodSugar] = useState("");
@@ -70,28 +71,34 @@ const BloodSugarLog = () => {
       hour: "2-digit",
       minute: "2-digit",
     });
-    const logEntry = {
-      date: new Date().toLocaleDateString(),
-      bloodSugar,
-      mealType,
-      time: currentTime,
-      notes,
-      healthStatus:
-        healthStatus === "Other" ? customHealthStatus : healthStatus,
-    };
-
-    setSubmittedData(logEntry);
-    setModalVisible(true);
-
-    // Clear input fields
-    setBloodSugar("");
-    setMealType("Breakfast");
-    setIsFasting("No");
-    setNotes("");
-    setHealthStatus("Normal");
-    setCustomHealthStatus("");
 
     try {
+      // Fetch current user details to get user ID
+      // const currentUser = await client.account.get();
+      // const userId = currentUser.$id; //id from appwrite
+
+      const logEntry = {
+        // userId,
+        date: new Date().toLocaleDateString(),
+        bloodSugar,
+        mealType,
+        time: currentTime,
+        notes,
+        healthStatus:
+          healthStatus === "Other" ? customHealthStatus : healthStatus,
+      };
+
+      setSubmittedData(logEntry);
+      setModalVisible(true);
+
+      // Clear input fields
+      setBloodSugar("");
+      setMealType("Breakfast");
+      setIsFasting("No");
+      setNotes("");
+      setHealthStatus("Normal");
+      setCustomHealthStatus("");
+
       // Retrieve existing log entries
       const storedLogs = await AsyncStorage.getItem("logEntries");
       const logEntries = storedLogs ? JSON.parse(storedLogs) : [];
@@ -101,6 +108,11 @@ const BloodSugarLog = () => {
 
       // Save the updated log entries back to AsyncStorage
       await AsyncStorage.setItem("logEntries", JSON.stringify(logEntries));
+
+      setTimeout(() => {
+        setModalVisible(false);
+        navigation.navigate("LogHistory", { newLog: logEntry });
+      }, 2000);
 
       const response = await databases.createDocument(
         "66682e8d0021614bfa8d",
@@ -121,11 +133,6 @@ const BloodSugarLog = () => {
       console.error("Failed to save log entry", error);
       console.error("Error creating document:", error);
     }
-
-    setTimeout(() => {
-      setModalVisible(false);
-      navigation.navigate("LogHistory", { newLog: logEntry });
-    }, 2000);
   };
 
   const handleCloseModal = () => {

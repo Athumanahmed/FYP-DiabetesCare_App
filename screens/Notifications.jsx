@@ -7,21 +7,21 @@ import {
   TouchableOpacity,
 } from "react-native";
 import NotificationItem from "./NotificationItem";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 
 const notifications = [
   {
     id: "1",
     message: "Doctor moved time session on 17 April, 12:00 PM",
     time: "2 hours ago",
-    profileImage: "https://randomuser.me/api/portraits/women/1.jpg",
+    profileImage: "https://randomuser.me/api/portraits/men/11.jpg",
     backgroundColor: "#E0F7FA",
   },
   {
     id: "2",
     message: "Doctor moved time session on 17 April, 12:00 PM",
     time: "5 hours ago",
-    profileImage: "https://randomuser.me/api/portraits/women/2.jpg",
+    profileImage: "https://randomuser.me/api/portraits/men/26.jpg",
     backgroundColor: "#F1F8E9",
   },
 
@@ -52,7 +52,7 @@ const Notifications = ({ navigation }) => {
           <FontAwesome5 name="home" size={24} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
-          <FontAwesome5 name="search" size={24} color="black" />
+          <MaterialIcons name="restaurant" size={24} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
           <FontAwesome5 name="bell" size={24} color="black" />
