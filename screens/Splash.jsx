@@ -5,12 +5,10 @@ const Splash = () => {
   const navigation = useNavigation();
 
   const handleLogin = () => {
-    navigation.navigate("Login");
+    navigation.navigate("Choice");
   };
 
-  const handleSignup = () => {
-    navigation.navigate("Signup");
-  };
+ 
   return (
     <View className="bg-white h-full w-full">
       <View className="w-full justify-around flex mt-20">

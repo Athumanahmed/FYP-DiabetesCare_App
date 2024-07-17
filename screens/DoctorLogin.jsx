@@ -1,71 +1,69 @@
-import React, { useEffect, useState } from "react";
 import {
-  Alert,
   Image,
   Text,
   TextInput,
   TouchableOpacity,
   View,
+  Alert,
   ActivityIndicator,
 } from "react-native";
+import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { account } from "../config/Appwrite";
 
-const Signup = () => {
+const DoctorLogin = () => {
   const navigation = useNavigation();
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleLogin = () => {
-    navigation.navigate("Login");
+  const handleSignup = () => {
+    navigation.navigate("DoctorSignup");
   };
 
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        await account.get();
-        // If there's an active session, log out
-        await account.deleteSession("current");
-      } catch (error) {
-        // No active session found, no action needed
-        console.log("No active session found.");
-      }
-    };
-
-    checkSession();
-  }, []);
-
-  const handleSignup = async () => {
-    //  email validation 
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-      setError("Please enter a valid email address.");
-      return;
-    }
-
+  const handleLogin = async () => {
     setLoading(true);
     setError("");
+
     try {
-      const response = await account.create("unique()", email, password, name);
-      console.log(response);
-      navigation.navigate("Login");
+      const response = await fetch(
+        "http://192.168.188.100:8000/api/users/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Assuming the backend returns a user object and a token
+        console.log(data); // Log the response for debugging
+        navigation.navigate("RegisterDoctor", { user: data.user });
+      } else {
+        // Handle errors returned from the backend
+        Alert.alert("Login Failed", data.message || "An error occurred");
+      }
     } catch (error) {
-      Alert.alert("Signup Failed", error.message);
       console.error(error);
+      Alert.alert("Login Failed", "An error occurred");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <View className="bg-white w-full h-full ">
+    <View className="bg-white w-full h-full flex items-center justify-center ">
       <View className="w-full justify-around flex pt-30 pb-5">
         <View className="flex items-center justify-center rounded-full mb-2">
           <Image
-            className="w-[300] h-[300] rounded-full"
+            className="w-[300] h-[300]"
             source={require("../assets/health.png")}
           />
         </View>
@@ -74,24 +72,12 @@ const Signup = () => {
             DiabetesCare.
           </Text>
         </View>
-        {/* header */}
         <View className="flex items-center mb-5">
           <Text className="font-semibold text-xl text-slate-400">
-            Register to start your health session now
+            Login as a Healthcare Provider
           </Text>
         </View>
-        {/* form */}
         <View className="flex items-center justify-center mx-4 space-y-4">
-          <View className="bg-black/5 p-4 rounded-xl w-full mb-2">
-            <TextInput
-              className="text-lg"
-              placeholder="Enter your Name"
-              placeholderTextColor={"gray"}
-              value={name}
-              onChangeText={setName}
-              autoCapitalize="none"
-            />
-          </View>
           <View className="bg-black/5 p-4 rounded-xl w-full mb-2">
             <TextInput
               className="text-lg"
@@ -114,30 +100,26 @@ const Signup = () => {
             />
           </View>
 
-          {error ? (
-            <Text className="text-red-500 text-center">{error}</Text>
-          ) : null}
-
           <View className="w-full">
             <TouchableOpacity
               className="p-3 rounded-lg mb-3 bg-blue-800"
-              onPress={handleSignup}
+              onPress={handleLogin}
               disabled={loading}
             >
               {loading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
                 <Text className="text-white text-center text-xl font-semibold">
-                  Sign Up
+                  Login
                 </Text>
               )}
             </TouchableOpacity>
           </View>
 
           <View className="flex-row justify-center">
-            <Text className="text-lg mr-4">Already have an Account?</Text>
-            <TouchableOpacity onPress={handleLogin}>
-              <Text className="text-blue-900 text-lg font-bold">Login</Text>
+            <Text className="text-lg mr-4">Don't have an Account?</Text>
+            <TouchableOpacity onPress={handleSignup}>
+              <Text className="text-blue-900 text-lg font-bold">Sign Up</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -146,4 +128,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default DoctorLogin;

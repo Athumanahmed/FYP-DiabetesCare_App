@@ -5,9 +5,16 @@ import {
   Feather,
   AntDesign,
   Ionicons,
+  MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import React from "react";
-import { View, Text, StyleSheet, ScrollView,TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 
 // Sample user data (replace this with actual user data from your state or props)
 const userData = {
@@ -104,16 +111,16 @@ const Profile = ({ navigation }) => {
       {/* Navigation Bar */}
       <View style={styles.navBar}>
         <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
-          <FontAwesome5 name="home" size={24} color="black" />
+          <MaterialCommunityIcons name="home" size={30} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
-          <MaterialIcons name="restaurant" size={24} color="black" />
+          <MaterialCommunityIcons name="food" size={30} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
-          <FontAwesome5 name="bell" size={24} color="black" />
+          <MaterialCommunityIcons name="bell" size={30} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-          <FontAwesome5 name="user" size={24} color="black" />
+          <MaterialCommunityIcons name="account" size={30} color="black" />
         </TouchableOpacity>
       </View>
     </View>

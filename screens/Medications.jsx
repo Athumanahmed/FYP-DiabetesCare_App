@@ -11,7 +11,7 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useNavigation } from "@react-navigation/native";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { databases } from "../config/Appwrite";
 
@@ -216,16 +216,16 @@ const Medications = () => {
       {/* Navigation Bar */}
       <View style={styles.navBar}>
         <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
-          <FontAwesome5 name="home" size={24} color="black" />
+          <MaterialCommunityIcons name="home" size={30} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
-          <FontAwesome5 name="search" size={24} color="black" />
+          <MaterialCommunityIcons name="food" size={30} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
-          <FontAwesome5 name="bell" size={24} color="black" />
+          <MaterialCommunityIcons name="bell" size={30} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-          <FontAwesome5 name="user" size={24} color="black" />
+          <MaterialCommunityIcons name="account" size={30} color="black" />
         </TouchableOpacity>
       </View>
     </View>

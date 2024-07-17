@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import NotificationItem from "./NotificationItem";
-import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
 const notifications = [
   {
@@ -49,16 +49,16 @@ const Notifications = ({ navigation }) => {
 
       <View style={styles.navBar}>
         <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
-          <FontAwesome5 name="home" size={24} color="black" />
+          <MaterialCommunityIcons name="home" size={30} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
-          <MaterialIcons name="restaurant" size={24} color="black" />
+          <MaterialCommunityIcons name="food" size={30} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
-          <FontAwesome5 name="bell" size={24} color="black" />
+          <MaterialCommunityIcons name="bell" size={30} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-          <FontAwesome5 name="user" size={24} color="black" />
+          <MaterialCommunityIcons name="account" size={30} color="black" />
         </TouchableOpacity>
       </View>
     </View>

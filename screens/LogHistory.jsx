@@ -10,7 +10,6 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import {
-  FontAwesome5,
   MaterialIcons,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
@@ -77,16 +76,16 @@ const LogHistoryScreen = () => {
       {/* Navigation Bar */}
       <View style={styles.navBar}>
         <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
-          <FontAwesome5 name="home" size={24} color="black" />
+          <MaterialCommunityIcons name="home" size={30} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
-          <MaterialIcons name="restaurant" size={24} color="black" />
+          <MaterialCommunityIcons name="food" size={30} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
-          <FontAwesome5 name="bell" size={24} color="black" />
+          <MaterialCommunityIcons name="bell" size={30} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-          <FontAwesome5 name="user" size={24} color="black" />
+          <MaterialCommunityIcons name="account" size={30} color="black" />
         </TouchableOpacity>
       </View>
     </View>

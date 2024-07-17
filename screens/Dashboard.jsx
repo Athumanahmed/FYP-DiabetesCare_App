@@ -9,14 +9,7 @@ import {
 } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
-import {
-  FontAwesome5,
-  MaterialIcons,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
-
-import { account } from "../config/Appwrite";
-import { databases } from "../config/Appwrite";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const Dashboard2 = ({ navigation }) => {
   const [user, setUser] = useState(null);
@@ -24,10 +17,22 @@ const Dashboard2 = ({ navigation }) => {
   const [bloodSugarData, setBloodSugarData] = useState([]);
 
   useEffect(() => {
-    const getUser = async () => {
+    const fetchUserData = async () => {
       try {
-        const response = await account.get();
-        setUser(response);
+        // Replace with your backend API endpoint to fetch user details
+        const response = await fetch("http://192.168.188.100:8000/api/users/all", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`, // Replace with your authentication token
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch user details");
+        }
+
+        const userData = await response.json();
+        setUser(userData);
       } catch (error) {
         console.error("Failed to fetch user details", error);
       } finally {
@@ -35,7 +40,7 @@ const Dashboard2 = ({ navigation }) => {
       }
     };
 
-    getUser();
+    fetchUserData();
   }, []);
 
   if (loading) {
@@ -68,7 +73,7 @@ const Dashboard2 = ({ navigation }) => {
     },
     yAxisLabel: "",
     yAxisSuffix: "mg/dL",
-    yAxisInterval: 1, // optional, defaults to 1
+    yAxisInterval: 1,
   };
 
   const screenWidth = Dimensions.get("window").width;
@@ -76,14 +81,14 @@ const Dashboard2 = ({ navigation }) => {
   return (
     <View style={styles.container}>
       {/* Welcome Message */}
-      <Text style={styles.welcome}>Hello {user ? user.name : "User"}</Text>
-      <Text style={styles.subtitle}>Welcome Back!</Text>
+      {/* <Text style={styles.welcome}>Hello {user ? user.name : "User"}</Text> */}
+      <Text style={styles.welcome}>Patient's Dashboard</Text>
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Blood Glucose Overview</Text>
         <LineChart
           data={data}
-          width={screenWidth - 40} // from react-native
+          width={screenWidth - 40}
           height={220}
           chartConfig={chartConfig}
           style={{
@@ -100,8 +105,8 @@ const Dashboard2 = ({ navigation }) => {
           style={[styles.optionBox, styles.greenBox]}
           onPress={() => navigation.navigate("BloodSugarLog")}
         >
-          <FontAwesome5
-            name="syringe"
+          <MaterialCommunityIcons
+            name="needle"
             size={40}
             color="black"
             style={styles.icon}
@@ -112,8 +117,8 @@ const Dashboard2 = ({ navigation }) => {
           style={[styles.optionBox, styles.blueBox]}
           onPress={() => navigation.navigate("LogHistory")}
         >
-          <MaterialIcons
-            name="timeline"
+          <MaterialCommunityIcons
+            name="blood-bag"
             size={40}
             color="black"
             style={styles.icon}
@@ -149,16 +154,16 @@ const Dashboard2 = ({ navigation }) => {
       {/* Navigation Bar */}
       <View style={styles.navBar}>
         <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
-          <FontAwesome5 name="home" size={24} color="black" />
+          <MaterialCommunityIcons name="home" size={30} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
-          <MaterialIcons name="restaurant" size={24} color="black" />
+          <MaterialCommunityIcons name="food" size={30} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
-          <FontAwesome5 name="bell" size={24} color="black" />
+          <MaterialCommunityIcons name="bell" size={30} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-          <FontAwesome5 name="user" size={24} color="black" />
+          <MaterialCommunityIcons name="account" size={30} color="black" />
         </TouchableOpacity>
       </View>
     </View>
@@ -172,24 +177,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 40,
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  profileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
   welcome: {
     fontSize: 28,
     fontWeight: "bold",
     marginBottom: 5,
-  },
-  icon: {
-    marginBottom: 10,
   },
   subtitle: {
     fontSize: 16,
